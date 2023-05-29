@@ -81,6 +81,7 @@ test:
 #
 production:
   <<: *default
-  database: vishis_api_production
-  username: vishis_api
-  password: <%= ENV["VISHIS_API_DATABASE_PASSWORD"] %>
+  url: <%= ENV["DATABASE_URL"] %>
+  # database: vishis_api_production
+  # username: vishis_api
+  # password: <%= ENV["VISHIS_API_DATABASE_PASSWORD"] %>
