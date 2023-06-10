@@ -8,6 +8,10 @@ gem "devise"
 gem 'devise-jwt'
 gem 'jsonapi-serializer'
 gem 'warden-jwt_auth', '~> 0.6.0'
+
+# Can Can Can for user permissions
+gem 'cancancan'
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.0.4", ">= 7.0.4.3"
 
