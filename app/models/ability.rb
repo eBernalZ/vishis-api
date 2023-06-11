@@ -4,38 +4,39 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-    can :read, Event, {verified: true, status: :published}
+    can :read, Event, { verified: true, status: :published }
+    can :read, Source, { verified: true, status: :published }
 
     return unless user.present?
+    can :create, Event
     can :read, Event, author_id: user.id
+    can :update, Event, { author_id: user.id, status: :draft }
+    can :destroy, Event, { author_id: user.id, status: :draft }
 
+    can :create, Source
+    can :read, Source, author_id: user.id
+    can :update, Source, { author_id: user.id, status: :draft }
+    can :destroy, Source, { author_id: user.id, status: :draft }
 
-    # return unless user.admin?
-    # can :manage, :all
+    return unless user.moderator?
+    can :read, Event, { status: :published, verified: false }
+    can :update, Event, { status: :published, verified: false }
+    can :destroy, Event, { status: :published, verified: false }
 
-    # Define abilities for the user here. For example:
-    #
-    #   return unless user.present?
-    #   can :read, :all
-    #   return unless user.admin?
-    #   can :manage, :all
-    #
-    # The first argument to `can` is the action you are giving the user
-    # permission to do.
-    # If you pass :manage it will apply to every action. Other common actions
-    # here are :read, :create, :update and :destroy.
-    #
-    # The second argument is the resource the user can perform the action on.
-    # If you pass :all it will apply to every resource. Otherwise pass a Ruby
-    # class of the resource.
-    #
-    # The third argument is an optional hash of conditions to further filter the
-    # objects.
-    # For example, here the user can only update published articles.
-    #
-    #   can :update, Article, published: true
-    #
-    # See the wiki for details:
-    # https://github.com/CanCanCommunity/cancancan/blob/develop/docs/define_check_abilities.md
+    can :update, Source, { status: :published, verified: false }
+    can :destroy, Source, { status: :published, verified: false }
+    can :read, Source, { status: :published, verified: false }
+    
+    return unless user.admin?
+    can :read, Event
+    can :create, Event
+    can :update, Event
+    can :destroy, Event
+
+    can :read, Source
+    can :create, Source
+    can :update, Source
+    can :destroy, Source
+
   end
 end
