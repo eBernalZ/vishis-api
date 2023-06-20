@@ -5,6 +5,14 @@ class Event < ApplicationRecord
     enum event_type: [:macro, :micro]
     enum status: [:draft, :published]
     enum event_status: [:ongoing, :finished]
+    validates :name, presence: true
+    validates :description, presence: true
+    validates :event_type, presence: true
+    validates :start_date, presence: true
+    validates :country, presence: true
+    validates :language, presence: true
+    validates :event_status, presence: true
+
    
     
     def getCoordinates

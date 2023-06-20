@@ -1,5 +1,4 @@
 class EventsController < ApplicationController
-  # load_and_authorize_resource
   before_action :set_event, only: %i[ show update destroy ]
   before_action :authenticate_user!, only: %i[ create update destroy ]
   # before_action :authenticate_user!
@@ -7,14 +6,15 @@ class EventsController < ApplicationController
   # GET /events
   def index
     @events = Event.accessible_by(current_ability)
-    # @events = Event.all
-
-    render json: @events
+    serializedEvents = @events.map do |event|
+      EventSerializer.new(event: event).serialize_event(event)
+    end
+    render json: serializedEvents
   end
 
   # GET /events/1
   def show
-    render json: @event
+    render json: EventSerializer.new(event: @event).serialize_event(@event)
   end
 
   # POST /events
@@ -22,7 +22,7 @@ class EventsController < ApplicationController
     @event = Event.new(event_params)
 
     if @event.save
-      render json: @event, status: :created, location: @event
+      render json: EventSerializer.new(event: @event).serialize_event(@event), status: :created, location: @event
     else
       render json: @event.errors, status: :unprocessable_entity
     end
