@@ -10,10 +10,47 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_29_141254) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_18_221051) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "event_type", null: false
+    t.date "start_date", null: false
+    t.date "end_date"
+    t.string "name", null: false
+    t.text "description", default: ""
+    t.integer "status", null: false
+    t.boolean "verified", default: false
+    t.uuid "author_id", null: false
+    t.uuid "checker_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "language"
+    t.integer "event_status", default: 0
+    t.string "country", null: false
+    t.index ["author_id"], name: "index_events_on_author_id"
+    t.index ["checker_id"], name: "index_events_on_checker_id"
+  end
+
+  create_table "sources", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "event_id", null: false
+    t.string "name", null: false
+    t.text "description", default: ""
+    t.integer "source_type", null: false
+    t.string "url"
+    t.boolean "verified", default: false
+    t.uuid "author_id", null: false
+    t.uuid "checker_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "language"
+    t.integer "status", default: 0
+    t.index ["author_id"], name: "index_sources_on_author_id"
+    t.index ["checker_id"], name: "index_sources_on_checker_id"
+    t.index ["event_id"], name: "index_sources_on_event_id"
+  end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "first_name", null: false
@@ -40,4 +77,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_29_141254) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "events", "users", column: "author_id"
+  add_foreign_key "events", "users", column: "checker_id"
+  add_foreign_key "sources", "events"
+  add_foreign_key "sources", "users", column: "author_id"
+  add_foreign_key "sources", "users", column: "checker_id"
 end
